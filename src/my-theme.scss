@@ -1,0 +1,54 @@
+@import '~@angular/material/theming';
+
+@include mat-core();
+$my-theme-primary: mat-palette($mat-indigo);
+$my-theme-accent:  mat-palette($mat-pink, A200, A100, A400);
+$my-theme-warn:    mat-palette($mat-red);
+$my-theme: mat-light-theme((
+  color: (
+    primary: $my-theme-primary,
+    accent: $my-theme-accent,
+    warn: $my-theme-warn
+  )
+));
+@include angular-material-theme($my-theme);
+
+$alternate-primary: mat-palette($mat-grey, A200, A100, A400);
+$alternate-accent:  mat-palette($mat-grey, A200, A100, A400);
+$alternate-warn:    mat-palette($mat-grey);
+$alternate-theme: mat-dark-theme((
+  color: (
+    primary: $alternate-primary,
+    accent: $alternate-accent,
+    warn: $alternate-warn
+  )
+));
+.alternate-button {
+    // Extract the color configuration from the theme and generate
+    // the color theme styles for `mat-button`.
+    @include mat-button-color($alternate-theme);
+}
+
+////////////////////////
+.mat-form-field-appearance-fill .mat-form-field-flex {
+    background-color: rgba(0, 0, 0, 0.0);
+}
+mat-icon {
+    color: #ff4081;
+}
+mat-spinner.whiteCircle circle {
+    stroke: #fff !important;
+}
+.absolutek {
+    position: absolute !important;
+}
+.opacitek {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+.menuDropDownButton {
+    background-color: #ff4081;
+}
+.menuDropDownIcon {
+    color: #fff !important;
+}

@@ -1,0 +1,20 @@
+<div class="row text-center mt-5 g-0">
+    <div class="col-7 pt-3 mx-auto comments">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-2"> {{commentsAmount}} Komentarzy</h1>
+                <h2 *ngIf="!isLoggedIn" class="mb-3"><a href="">Zaloguj się</a> aby dodać komentarz!</h2>
+            </div>
+            <div class="col-8 offset-1">
+                <div class="form-floating">
+                    <textarea [(ngModel)]='test' class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                    <label for="floatingTextarea">Leave a comment if you want :)</label>
+                </div>
+            </div>
+            <div class="col-auto my-auto">
+                <button class="btn btn-light" (click)="addComment()">Dodaj komentarz</button>
+            </div>
+        </div>
+        <app-comment></app-comment>
+    </div>
+</div>

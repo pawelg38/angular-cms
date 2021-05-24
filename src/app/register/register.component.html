@@ -1,0 +1,37 @@
+<div class="row g-0">
+    <div class="col-2 my-5 px-3 py-4 mx-auto registerCard">
+        <form (ngSubmit)="onSubmit()">
+            <div class="d-flex flex-column">
+                <mat-form-field appearance="fill" class="flex-fill" color="accent">
+                    <mat-label>First Name</mat-label>
+                    <input matInput [formControl]="firstName">
+                    <mat-error *ngIf="firstName.invalid">{{getErrorMessage(firstName)}}</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="flex-fill" color="accent">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput [formControl]="lastName">
+                    <mat-error *ngIf="lastName.invalid">{{getErrorMessage(lastName)}}</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="flex-fill" color="accent">
+                    <mat-label>Username</mat-label>
+                    <input matInput [formControl]="username">
+                    <mat-error *ngIf="username.invalid">{{getErrorMessage(username)}}</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="flex-fill" color="accent">
+                    <mat-label>Password</mat-label>
+                    <input matInput [formControl]="password" [type]="hide ? 'password' : 'text'">
+                    <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon matSuffix aria-hidden="false" aria-label="Example visibility icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="password.invalid">{{getErrorMessage(password)}}</mat-error>
+                </mat-form-field>
+                <button type="submit" mat-raised-button color="accent">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <mat-spinner *ngIf="loadingReg" diameter="15" class="me-2 whiteCircle"></mat-spinner>
+                        <span>Register</span>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

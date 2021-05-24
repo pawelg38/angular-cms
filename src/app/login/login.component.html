@@ -1,0 +1,63 @@
+<div class="row g-0">
+    <div class="col-2 my-5 px-3 py-4 offset-5 loginCard">
+        <div *ngIf="errorOccured" class="text-center py-1 errorAlert">{{errorMessage}}</div>
+        <form (ngSubmit)="onSubmit()">
+            <div class="d-flex flex-column">
+                <mat-form-field appearance="fill" class="flex-fill" color="accent">
+                    <mat-label>Username</mat-label>
+                    <input matInput [formControl]="username" autocomplete="off">
+                    <mat-error *ngIf="username.invalid">{{getErrorMessage(username)}}</mat-error>
+                    <mat-icon matSuffix aria-hidden="false" aria-label="Example person icon">person</mat-icon>
+                </mat-form-field>
+                <!-- <mat-form-field appearance="fill" class="b1 pb-20 flex-fill" color="accent" [ngStyle]="{'padding-bottom': pb(1)}"> -->
+                <mat-form-field appearance="fill" class="flex-fill" color="accent" [ngStyle]="{'padding-bottom': padding}">
+                    <mat-label>Password</mat-label>
+                    <input matInput [formControl]="password" [type]="hide ? 'password' : 'text'">
+                    <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon matSuffix aria-hidden="false" aria-label="Example visibility icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                    <!-- <mat-error *ngIf="password.invalid">{{getErrorMessage(password)}}</mat-error> -->
+                    <mat-error *ngFor="let item of getErrorMessage(password)">{{item}}</mat-error>
+                </mat-form-field>
+                <div class="row mt-3 g-0">
+                    <div class="col-6 d-flex justify-content-center">
+                        <button type="submit" mat-raised-button>
+                            <div class="d-flex align-items-center">
+                                <mat-spinner *ngIf="loadingLog" diameter="15" color="accent" class="me-2"></mat-spinner>
+                                Login
+                            </div>
+                        </button>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <button type="button" mat-raised-button color="accent" (click)="registerBtn()">
+                            <div class="d-flex align-items-center">
+                                <mat-spinner *ngIf="loadingReg" diameter="15" color="accent" class="me-2 whiteCircle"></mat-spinner>
+                                Register
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div (click)="test()" [ngClass]="{'blackFogAnimation1': !isAnimationOn, 'blackFogAnimation2': isAnimationOn}"></div>
+    <div *ngIf="!isAnimatedElementHidden" class="col-2 my-5 ms-auto" [ngClass]="{'fromLeftToRightAnimation1': !isAnimationOn, 'fromLeftToRightAnimation2': isAnimationOn}">
+        <div class="row g-0 note">
+            <div class="col p-2 pt-2 py-1 noteHeader">
+                Skorzystaj z domyślnie utworzonych kont:
+            </div>
+            <mat-divider></mat-divider>
+            <div class="col p-2 py-1">
+                Login: admin<br>
+                Hasło: admin1234
+                <br><br>
+                Login: guest<br>
+                Hasło: guest1234
+            </div>
+            <mat-divider></mat-divider>
+            <div class="col px-2 pb-2 py-1 noteHeader align-items-center d-flex flex-fill">
+                lub zarejestruj się :)
+            </div>
+        </div>
+    </div>
+</div>

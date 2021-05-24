@@ -1,0 +1,40 @@
+<div class="row text-center g-0">
+    <div class="col-12 px-5 py-5 contentDiv">
+        <h1 class="my-4">{{post.title}}</h1>
+    </div>
+    <div class="col-12 parallax-background parallax-background-image-{{post.id}}">
+    </div>
+    <div class="col-12 px-5 py-5 contentDiv">
+        <p>{{post.content.akapit1}}</p>
+        <p>{{post.content.akapit2}}</p>
+    </div>
+    <div class="col-12 parallax-background parallax-background-image-default">
+    </div>
+    <div class="col-12 px-5 py-5 contentDiv">
+        <p>{{post.content.akapit2}}</p>
+        <p>{{post.content.akapit3}}</p>
+    </div>
+    <div class="col-12 parallax-background parallax-background-image-{{post.id}}">
+    </div>
+    <!-- <div class="parallax-background-mask"> -->
+    <!-- <div class="col-6 py-5 mx-auto"> -->
+        <!-- <img src="../../assets/img/{{post.medImg}}" alt=""> -->
+    <!-- </div> -->
+    <!-- <div class="row g-0">
+            <ng-container *ngIf="isPostEdit; then yesPostEdit; else noPostEdit"></ng-container>
+            <ng-template #noPostEdit>
+            </ng-template>
+            <ng-template #yesPostEdit>
+                <div class="col-4 mx-auto">
+                     <input id="postHeader" type="text" [value]="post.title" size="20">
+                    <input class="form-control my-2" id="postHeader" type="text" [(ngModel)]="post.title">
+                </div>
+                <div class="col-12 mx-auto">
+                     <textarea class="form-control" id="postContent" type="text" value rows="20" cols="70">{{post.content}}</textarea>
+                    <textarea class="form-control" id="postContent" type="text" value rows="20" cols="70" [(ngModel)]="post.content"></textarea>
+                    <button class="btn btn-success my-3" (click)="savePost()">Zapisz</button>
+                </div>
+            </ng-template>
+        </div> -->
+</div>
+<app-footer></app-footer>

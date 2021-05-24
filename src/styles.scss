@@ -1,0 +1,25 @@
+@import '~@angular/material/theming';
+/* You can add global styles to this file, and also import other style files */
+body {
+    margin: 0;
+    //font-family: "Nunito", sans-serif;
+    //font-family: 'Montserrat', sans-serif !important;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    //overflow: hidden;
+}
+.b1 {
+    border: 1px solid red;
+}
+.b2 {
+    border: 1px solid #fff;
+}
+.is-invalid {
+    border: 1px solid red !important;
+}
+
+$border-radius5: 5px;
+$mat-elevation2: 2;
+@mixin defaultCard {
+    border-radius: $border-radius5;
+    @include mat-elevation($mat-elevation2);
+}

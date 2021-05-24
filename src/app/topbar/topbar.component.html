@@ -1,0 +1,47 @@
+<div class="row g-0 mat-elevation-z6 topBar">
+    <div class="col py-2 px-3">
+        <a class="" routerLink="" routerLinkActive="active" mat-raised-button color="accent">
+            <img src="../../assets/img/angular_whiteTransparent_min.png" alt="">
+            AngularCMS
+        </a>
+    </div>
+    <ng-container *ngIf="loggedIn; then loggedInTemp"></ng-container>
+    <ng-template #loggedInTemp>
+        <div class="col d-flex">
+            <div class="ms-auto menuBarContainer px-3">
+            <div class="menuRoll px-4 d-flex justify-content-center align-items-center">
+                Hi!<a mat-mini-fab color="primary" routerLink="" class="ms-2 me-4" routerLinkActive="active">{{userInfo[0]+userInfo[0]|uppercase}}</a>
+                <div class="menuDroppedBox px-3 pb-3" *ngIf="isMenuDroppedDown">
+                    <div class="menuContainer mx-auto mat-elevation-z8" [ngClass]="{'menuDropAnimation1': !isMenuAnimationOn, 'menuDropAnimation2': isMenuAnimationOn}">
+                        <div class="menuItem text-center py-2">
+                            <button mat-raised-button>#Some</button>
+                        </div>
+                        <div class="menuItem text-center py-2">
+                            <button mat-raised-button>#Future</button>
+                        </div>
+                        <div class="menuItem text-center py-2">
+                            <button mat-raised-button>#Things</button>
+                        </div>
+                        <div class="menuItem text-center py-2">
+                            <button mat-raised-button>#To</button>
+                        </div>
+                        <div class="menuItem text-center py-2">
+                            <button mat-raised-button>#Add</button>
+                        </div>
+                        <div class="menuItem text-center py-2" [class.alternate-button]="isMenuDroppedDown">
+                            <button mat-raised-button (click)="logout()">Logout</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="mat-elevation-z2 menuDropDownButton" mat-icon-button (click)="menuDropDown()">
+                        <mat-icon class="menuDropDownIcon"color="primary" aria-hidden="false" aria-label="Show more icon">
+                            more_vert
+                        </mat-icon>
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,41 @@
+<div class="row g-0 py-5">
+    <div class="col-8 mx-auto">
+        <div class="post mat-elevation-z2 d-flex my-5" *ngFor="let post of posts">
+            <a routerLink="/post/{{post.id}}" routerLinkActive="active">
+                <div class="row g-0">
+                    <div class="col-auto">
+                        <img class="mat-elevation-z6" [src]="'../../assets/img/'+post.minImg" alt="">
+                    </div>
+                    <div class="col postContent">
+                        <div class="px-3 pt-3 pb-2">
+                            <a routerLink="/post/{{post.id}}" routerLinkActive="active">
+                                <h1 class="">{{ post.title }}</h1>
+                            </a>
+                        </div>
+                        <div class="m-3">
+                            <div class="animatedLineBox">
+                                <hr class="mt-0 animatedLine">
+                                <p>{{ post.content.akapit1 | postTransform }}</p>
+                            </div>
+                            <!-- <mat-divider class="mb-3 pinkLine"></mat-divider> -->
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-8 mx-auto">
+        <div class="paginationDiv ms-auto">
+            <button mat-mini-fab class="paginationButton me-3" (click)="previousPage()">
+                <mat-icon class="navigate_before-icon" color="primary" aria-hidden="false" aria-label="Show more icon">navigate_before</mat-icon>
+            </button>
+            <label for="pageNumberInput" class="pageNumberInputLabel"></label>
+            <input id="pageNumberInput" [(ngModel)]="pageId" type="number" (focusout)="refreshInputValue($event)" class="pageNumberInput text-center">
+            of {{sitesAmount}}
+            <button mat-mini-fab class="paginationButton ms-3" (click)="nextPage()">
+                <mat-icon class="navigate_next-icon" color="primary" aria-hidden="false" aria-label="Show more icon">navigate_next</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

@@ -1,0 +1,25 @@
+<div class="row mt-4 g-0">
+    <div class="col-10 d-flex mx-auto mb-3" *ngFor="let comment of comments">
+        <img class=" px-0" [src]="comment.img">
+        <ng-container *ngIf="isCommentEdit[+comment.id-1]; then yesEdited; else noEdited"></ng-container>
+        <ng-template #noEdited>
+            <div class="text-start">
+                <h3 class="ps-2 mb-1" [ngStyle]="{'color': checkRole(comment.role)}" >{{ comment.name }}</h3>
+                <p class="ps-2 mb-0">{{ comment.content }}</p>
+            </div>
+        </ng-template>
+        <ng-template #yesEdited>
+            <div>
+                <h3 [ngStyle]="{'color': checkRole(comment.role)}" >{{ comment.name }}</h3>
+                <textarea [(ngModel)]='comment.content'></textarea>
+            </div>
+        </ng-template>
+        <ng-container *ngIf="isCommentEdit[+comment.id-1]; then noCommentEdit; else yesCommentEdit"></ng-container>
+        <ng-template #noCommentEdit>
+            <button (click)="saveComment(comment)">Zapisz</button></ng-template>
+        <ng-template #yesCommentEdit>
+            <!-- <button (click)="editComment(comment)">Edytuj</button> -->
+        </ng-template>
+        <!-- <button (click)="deleteComment(comment)">Usuń</button> -->
+    </div>
+</div>
