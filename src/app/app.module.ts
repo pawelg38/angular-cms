@@ -66,6 +66,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {OverlayModule} from '@angular/cdk/overlay';
 import { FooterComponent } from './footer/footer.component';
+import { AddingPostComponent } from './adding-post/adding-post.component';
+import { DragndropDirective } from './directives/dragndrop.directive';
 
 @NgModule({
   declarations: [
@@ -79,7 +81,9 @@ import { FooterComponent } from './footer/footer.component';
     CommentComponent,
     RegisterComponent,
     LoginComponent,
-    FooterComponent
+    FooterComponent,
+    AddingPostComponent,
+    DragndropDirective
   ],
   imports: [
     BrowserModule,

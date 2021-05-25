@@ -14,7 +14,7 @@
                 <div class="menuDroppedBox px-3 pb-3" *ngIf="isMenuDroppedDown">
                     <div class="menuContainer mx-auto mat-elevation-z8" [ngClass]="{'menuDropAnimation1': !isMenuAnimationOn, 'menuDropAnimation2': isMenuAnimationOn}">
                         <div class="menuItem text-center py-2">
-                            <button mat-raised-button>#Some</button>
+                            <a routerLink="/add-new-post" routerLinkActive="active" mat-raised-button>Add new post</a>
                         </div>
                         <div class="menuItem text-center py-2">
                             <button mat-raised-button>#Future</button>

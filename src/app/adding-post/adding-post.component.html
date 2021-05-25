@@ -1,0 +1,51 @@
+<div class="row g-0 justify-content-center">
+    <div class="col-6">
+        <div class="row g-0">
+            <div class="col text-center">
+                <p>Dodawanie nowego postu</p>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-6">
+                <mat-form-field appearance="standard">
+                <mat-label>Tytuł postu</mat-label>
+                <input matInput autocomplete="off">
+                </mat-form-field>
+            </div>
+            <div class="w-100"></div>
+            <div class="col">
+                <mat-form-field appearance="standard">
+                  <mat-label>Treść postu</mat-label>
+                  <textarea matInput rows="15"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="w-100"></div>
+            <div class="col">
+                Dodaj zdjęcię
+                <div class="upload-box">
+                    <div class="drop-zone" appDragndrop (fileDropped)="onFileDropped($event)">
+                        <input type="file" #fileDropRef id="fileDropRef" multiple>
+                        <div class="upload-icon-box">
+                            <mat-icon inline matSuffix aria-hidden="false" aria-label="Example file upload icon">file_upload</mat-icon>
+                        </div>
+                        <h3>Drag and drop file here</h3>
+                        <h3>or</h3>
+                    </div>
+                    <label for="fileDropRef">
+                        <button mat-raised-button>Browse for file</button>
+                    </label>
+                </div>
+                <div class="files-list">
+                    <div class="file-box" *ngFor="let file of files;">
+                        <mat-icon inline matSuffix aria-hidden="false" aria-label="Example plus sign icon">add_circle_outline</mat-icon>
+                        <div class="file-name">
+                            {{ file.name }}
+                        </div>
+                        <div class="file-size">
+                            {{ formatBytes(file?.size) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
