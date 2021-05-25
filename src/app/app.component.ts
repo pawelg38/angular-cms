@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AccountService } from './services/account.service';
 //import { slideInAnimation } from 'src/animations/slideInAnimation';
 
 @Component({

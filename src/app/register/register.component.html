@@ -17,6 +17,11 @@
                     <input matInput [formControl]="username">
                     <mat-error *ngIf="username.invalid">{{getErrorMessage(username)}}</mat-error>
                 </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Enter your email</mat-label>
+                    <input matInput placeholder="pat@example.com" [formControl]="email">
+                    <mat-error *ngIf="email.invalid">{{getErrorMessage(email)}}</mat-error>
+                </mat-form-field>
                 <mat-form-field appearance="fill" class="flex-fill" color="accent">
                     <mat-label>Password</mat-label>
                     <input matInput [formControl]="password" [type]="hide ? 'password' : 'text'">

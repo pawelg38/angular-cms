@@ -7,17 +7,12 @@ import { PostComponent } from './post/post.component';
 import { PostsComponent } from './posts/posts.component';
 import { PostTransformPipe } from './pipes/post-transform.pipe';
 import { PageComponent } from './page/page.component';
-import { CommentsComponent } from './comments/comments.component';
 import { CommentComponent } from './comment/comment.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PostService, postServiceProvider } from './services/post.service';
 import { RegisterComponent } from './register/register.component';
-import { AccountService } from './services/account.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FakeBackendInterceptor } from './interceptors/fake-backend.interceptor'
-import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { LoginComponent } from './login/login.component'
-import { AuthGuard } from './guards/auth.guard'
 import { PaginationService } from './services/pagination.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -68,7 +63,22 @@ import {OverlayModule} from '@angular/cdk/overlay';
 import { FooterComponent } from './footer/footer.component';
 import { AddingPostComponent } from './adding-post/adding-post.component';
 import { DragndropDirective } from './directives/dragndrop.directive';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { environment } from 'src/environments/environment';
+import { AuthService } from './services/auth.service';
 
+var firebaseConfig = {
+  apiKey: "AIzaSyDqz5hHx5912Up4-rgbxsXSiz-IoiAWNls",
+  authDomain: "angularcms-470bb.firebaseapp.com",
+  databaseURL: "https://angularcms-470bb-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "angularcms-470bb",
+  storageBucket: "angularcms-470bb.appspot.com",
+  messagingSenderId: "535973576309",
+  appId: "1:535973576309:web:e251eebc52e9f18252c23c",
+  measurementId: "G-QH912B8NL1"
+};
 @NgModule({
   declarations: [
     AppComponent,
@@ -77,7 +87,6 @@ import { DragndropDirective } from './directives/dragndrop.directive';
     PostsComponent,
     PostTransformPipe,
     PageComponent,
-    CommentsComponent,
     CommentComponent,
     RegisterComponent,
     LoginComponent,
@@ -136,17 +145,18 @@ import { DragndropDirective } from './directives/dragndrop.directive';
     MatTreeModule,
     OverlayModule,
     PortalModule,
-    ScrollingModule
+    ScrollingModule,
+
+    // Firebase modules
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule,
+    AngularFirestoreModule
   ],
   //providers: [{provide: PostService, useClass: PostService}],
   providers: [
-    AccountService,
+    AuthService,
     postServiceProvider,
-    PaginationService,
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true},
-    //fakeBackendProvider,
-    AuthGuard
+    PaginationService
   ],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

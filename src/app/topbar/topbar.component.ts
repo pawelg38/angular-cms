@@ -2,8 +2,8 @@ import { BoundElementProperty } from '@angular/compiler';
 import { AfterContentChecked, AfterContentInit, AfterViewChecked, AfterViewInit, Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Observable, from } from 'rxjs';
-import { User } from '../models/user';
-import { AccountService } from '../services/account.service'
+import { UserInfo } from '../models/user';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -19,7 +19,7 @@ export class TopbarComponent implements OnInit {
     //this.trigger.restoreFocus=false;
   }
 
-  private user: User;
+  private userInfo: UserInfo;
   public loggedIn: boolean = false;
   isMenuDropListShowed: boolean = false;
   isAnimationOn: boolean = false;
@@ -64,25 +64,25 @@ export class TopbarComponent implements OnInit {
     }
   }
 
-  constructor(private accountService: AccountService) {
-    this.accountService.userSubject.subscribe(x => {
-      if(x) {
-        this.loggedIn = true;
-        this.user = this.accountService.userSubjectValue;
-      }
-      else {
-        this.loggedIn = false;
-        this.user = null;
-      }
-    })
-  }
-
-  public get userInfo() {
-    return this.user.firstName;
+  constructor(
+    private authService: AuthService) {
+      
+      this.authService.authState().subscribe({
+        next: (x) => {
+          if (x) {
+            this.loggedIn = true;
+            this.userInfo = { username: x.displayName, email: x.email };
+          }
+          else {
+            this.loggedIn = false;
+            this.userInfo = null;
+          }
+        }
+      });
   }
 
   logout() {
-    this.accountService.logout();
+    this.authService.logout();
   }
 
   ngOnInit(): void {

@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { AccountService } from '../services/account.service';
 import { materialize, first, dematerialize, delay } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   isAnimationOn: boolean = false;
   hide: boolean = true;
   username = new FormControl('');
+  email = new FormControl('');
   password = new FormControl('');
   isAnimatedElementHidden: boolean = true;
   padding: string;
@@ -48,15 +49,18 @@ export class LoginComponent implements OnInit {
   }
   constructor(
     private formBuilder: FormBuilder,
-    private accountService: AccountService,
     private route: ActivatedRoute,
     private router: Router,
-    private renderer: Renderer2
-  ) {
-    if(accountService.userSubjectValue)
-    {
-      this.router.navigate(['/']);
-    }
+    private renderer: Renderer2,
+    private authService: AuthService) {
+      
+    this.authService.authState().subscribe({
+      next: (x) => {
+        if (x) {
+          this.router.navigate(['/']);
+        }
+      }
+    });
   }
   test() {
     if (this.isAnimatedElementHidden) {
@@ -97,10 +101,11 @@ export class LoginComponent implements OnInit {
     this.submitted = true;
     this.loadingLog = true;
     this.username = new FormControl(this.username.value, [Validators.required, Validators.minLength(3)]);
+    this.email = new FormControl(this.email.value, [Validators.required, Validators.email]);
     this.password = new FormControl(this.password.value, [Validators.required, Validators.minLength(3)]);
     
-    if (this.username.hasError('required') ||
-        this.username.hasError('minlength') ||
+    if (this.email.hasError('required') ||
+        this.email.hasError('email') ||
         this.password.hasError('required')
         ) {
       setTimeout(() => {
@@ -111,19 +116,7 @@ export class LoginComponent implements OnInit {
       }, 200);
       return;
     }
-    this.accountService.login(this.username.value, this.password.value)
-        .pipe(first())
-        .subscribe({
-            next: () => {
-                // get return url from query parameters or default to home page
-                const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-                this.router.navigateByUrl(returnUrl);
-            },
-            error: x => {
-                this.showErrorMessage(x.error.message);
-                this.loadingLog = false;
-            }
-        });
+    this.authService.login({email: this.email.value, password: this.password.value})
   }
   showErrorMessage(errorMessage) {
     this.errorOccured = true;

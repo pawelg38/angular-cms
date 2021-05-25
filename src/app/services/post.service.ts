@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Comment } from '../models/comment';
 import { Post } from '../models/post';
-import { AccountService } from './account.service';
+import { AuthService } from './auth.service';
 
 let posts: Array<Post> = [
   {
@@ -141,7 +141,7 @@ export class PostService {
 
   constructor(
     private router: Router,
-    private accountService: AccountService
+    private authService: AuthService
   ) {
       //let postsArray = JSON.parse(localStorage.getItem(postsKey)) || [];
   }
@@ -189,12 +189,20 @@ export class PostService {
     localStorage.setItem(postsKey, JSON.stringify(postsArray));
   }
   addComment(comment: string): void {
+    let tmpName: string;
+    this.authService.authState().subscribe({
+      next: (x) => {
+        if (x) {
+          tmpName = x.displayName;
+        }
+      }
+    });
     let postNum = postsArray.length - parseInt(this.router.url[this.router.url.length-1]);
     postsArray[postNum]
       .comments.push({
         post: postNum.toString(),
         id: this.getComments().length.toString(),
-        name: `${this.accountService.userSubjectValue.firstName} ${this.accountService.userSubjectValue.lastName}`,
+        name: tmpName,
         role: 'guest',
         content: comment,
         img: '../../assets/img/guest-icon.jpg'

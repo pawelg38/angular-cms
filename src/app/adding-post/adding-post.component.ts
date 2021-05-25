@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-adding-post',
@@ -8,7 +9,10 @@ import { Component, OnInit } from '@angular/core';
 export class AddingPostComponent implements OnInit {
   public files: any[] = [];
 
-  constructor() { }
+  constructor(private db: AngularFirestore) {
+    const items = db.collection('items').valueChanges();
+    items.subscribe(console.log);
+  }
 
   onFileDropped(e) {
     console.log("step1");

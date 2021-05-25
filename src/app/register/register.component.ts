@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { AccountService } from '../services/account.service';
 import { delay, first } from 'rxjs/operators'
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { User } from '../models/user';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit {
   firstName = new FormControl('');
   lastName = new FormControl('');
   username = new FormControl('');
+  email = new FormControl('');
   password = new FormControl('');
   hide: boolean = false;
   loadingReg: boolean = false;
@@ -27,23 +28,30 @@ export class RegisterComponent implements OnInit {
       if (input.hasError('required')) {
         return 'You must enter a value';
       }
+      if (input.hasError('email')) {
+        return 'You must enter a valid email';
+      }
     }
   }
   constructor(
     private formBuilder: FormBuilder,
-    private accountService: AccountService,
-    private router: Router
-  ) {
-    if(accountService.userSubjectValue)
-      this.router.navigate(['/']);
-    }
+    private router: Router,
+    private authService: AuthService) {
+      
+      this.authService.authState().subscribe({
+        next: (x) => {
+          if (x) this.router.navigate(['/']);
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        username: ['', Validators.required],
-        password: ['', [Validators.required, Validators.minLength(6)]]
+        firstName:  ['', Validators.required],
+        lastName:   ['', Validators.required],
+        username:   ['', Validators.required],
+        email:      ['', [Validators.required, Validators.email]],
+        password:   ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -53,6 +61,7 @@ export class RegisterComponent implements OnInit {
     this.firstName = new FormControl(this.firstName.value, [Validators.required]);
     this.lastName = new FormControl(this.lastName.value, [Validators.required]);
     this.username = new FormControl(this.username.value, [Validators.required]);
+    this.email = new FormControl(this.email.value, [Validators.required, Validators.email]);
     this.password = new FormControl(this.password.value, [Validators.required]);
 
     if (this.firstName.hasError('required') &&
@@ -66,23 +75,13 @@ export class RegisterComponent implements OnInit {
     }
 
     let tempUser: User = {
-      id:'',
-      firstName:this.firstName.value,
-      lastName:this.lastName.value,
-      username:this.username.value,
-      password:this.password.value,
-      token:''
+      firstName:  this.firstName.value,
+      lastName:   this.lastName.value,
+      username:   this.username.value,
+      email:      this.email.value,
+      password:   this.password.value,
     }
-    this.accountService.register(tempUser)
-    .pipe(first())
-    .subscribe({
-      next: () => {
-        this.router.navigate(['localhost:4201/login']);
-      },
-      error: error => {
-        //console.log(error);
-      }
-    })
+    this.authService.register(tempUser);
   }
 
 }

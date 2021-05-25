@@ -4,9 +4,9 @@
         <form (ngSubmit)="onSubmit()">
             <div class="d-flex flex-column">
                 <mat-form-field appearance="fill" class="flex-fill" color="accent">
-                    <mat-label>Username</mat-label>
-                    <input matInput [formControl]="username" autocomplete="off">
-                    <mat-error *ngIf="username.invalid">{{getErrorMessage(username)}}</mat-error>
+                    <mat-label>Email</mat-label>
+                    <input matInput [formControl]="email" autocomplete="off">
+                    <mat-error *ngIf="email.invalid">{{getErrorMessage(email)}}</mat-error>
                     <mat-icon matSuffix aria-hidden="false" aria-label="Example person icon">person</mat-icon>
                 </mat-form-field>
                 <!-- <mat-form-field appearance="fill" class="b1 pb-20 flex-fill" color="accent" [ngStyle]="{'padding-bottom': pb(1)}"> -->
