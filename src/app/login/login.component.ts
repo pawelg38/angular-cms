@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { materialize, first, dematerialize, delay } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { delay } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
@@ -24,43 +24,23 @@ export class LoginComponent implements OnInit {
   email = new FormControl('');
   password = new FormControl('');
   isAnimatedElementHidden: boolean = true;
-  padding: string;
-  errorOccured: boolean = false;
-  errorMessage: string = '';
 
-  pb(array: number) {
-    return (array*20).toString() + 'px';
-  }
   getErrorMessage(input) {
     if(input) {
-      let errorArray: Array<string> = [];
       if (input.hasError('required')) {
-        errorArray.push('You must enter a value');
+        return 'You must enter a value';
       }
       if (input.hasError('minlength')) {
-        errorArray.push('You must enter at least 3 characters');
+        return 'You must enter at least 3 characters';
       }
-
-      //console.log("input.errors: "+input.errors);
-      //this.padding = (errorArray.length*10).toString()+'px';
-      //console.log(errorArray);
-      return errorArray;
+      if (input.hasError('email')) {
+        return 'You must enter a valid email address';
+      }
     }
   }
   constructor(
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
     private router: Router,
-    private renderer: Renderer2,
     private authService: AuthService) {
-      
-    this.authService.authState().subscribe({
-      next: (x) => {
-        if (x) {
-          this.router.navigate(['/']);
-        }
-      }
-    });
   }
   test() {
     if (this.isAnimatedElementHidden) {
@@ -77,12 +57,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-    this.form = this.formBuilder.group({
-        username: ['', Validators.required],
-        password: ['', Validators.required]
-    });
-  }
 
   registerBtn() {
     if (this.isAlternateMode == false)
@@ -100,9 +74,8 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     this.loadingLog = true;
-    this.username = new FormControl(this.username.value, [Validators.required, Validators.minLength(3)]);
     this.email = new FormControl(this.email.value, [Validators.required, Validators.email]);
-    this.password = new FormControl(this.password.value, [Validators.required, Validators.minLength(3)]);
+    this.password = new FormControl(this.password.value, [Validators.required, Validators.minLength(6)]);
     
     if (this.email.hasError('required') ||
         this.email.hasError('email') ||
@@ -118,8 +91,7 @@ export class LoginComponent implements OnInit {
     }
     this.authService.login({email: this.email.value, password: this.password.value})
   }
-  showErrorMessage(errorMessage) {
-    this.errorOccured = true;
-    this.errorMessage = errorMessage;
+  
+  ngOnInit(): void {
   }
 }

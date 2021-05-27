@@ -66,6 +66,7 @@ import { DragndropDirective } from './directives/dragndrop.directive';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './services/auth.service';
 
@@ -150,7 +151,8 @@ var firebaseConfig = {
     // Firebase modules
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AngularFireStorageModule
   ],
   //providers: [{provide: PostService, useClass: PostService}],
   providers: [

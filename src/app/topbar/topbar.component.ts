@@ -19,7 +19,7 @@ export class TopbarComponent implements OnInit {
     //this.trigger.restoreFocus=false;
   }
 
-  private userInfo: UserInfo;
+  private userInfo: string;
   public loggedIn: boolean = false;
   isMenuDropListShowed: boolean = false;
   isAnimationOn: boolean = false;
@@ -64,25 +64,29 @@ export class TopbarComponent implements OnInit {
     }
   }
 
-  constructor(
-    private authService: AuthService) {
-      
-      this.authService.authState().subscribe({
-        next: (x) => {
-          if (x) {
-            this.loggedIn = true;
-            this.userInfo = { username: x.displayName, email: x.email };
-          }
-          else {
-            this.loggedIn = false;
-            this.userInfo = null;
-          }
+  constructor(private authService: AuthService) {
+    //this.loggedIn = false;
+    this.authService.userLoggedIn.subscribe({
+      next: x => {
+        if (x) {
+          this.loggedIn = true;
+          this.userInfo = x.email;
         }
-      });
+        else {
+          this.loggedIn = false;
+          this.userInfo = '';
+        }
+      }
+    })
+  }
+
+  getUsername() {
+    //return this.userInfo.username;
   }
 
   logout() {
     this.authService.logout();
+    //this.loggedIn = false;
   }
 
   ngOnInit(): void {

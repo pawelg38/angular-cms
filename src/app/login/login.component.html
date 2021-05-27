@@ -1,6 +1,5 @@
 <div class="row g-0">
     <div class="col-2 my-5 px-3 py-4 offset-5 loginCard">
-        <div *ngIf="errorOccured" class="text-center py-1 errorAlert">{{errorMessage}}</div>
         <form (ngSubmit)="onSubmit()">
             <div class="d-flex flex-column">
                 <mat-form-field appearance="fill" class="flex-fill" color="accent">
@@ -9,14 +8,12 @@
                     <mat-error *ngIf="email.invalid">{{getErrorMessage(email)}}</mat-error>
                     <mat-icon matSuffix aria-hidden="false" aria-label="Example person icon">person</mat-icon>
                 </mat-form-field>
-                <!-- <mat-form-field appearance="fill" class="b1 pb-20 flex-fill" color="accent" [ngStyle]="{'padding-bottom': pb(1)}"> -->
-                <mat-form-field appearance="fill" class="flex-fill" color="accent" [ngStyle]="{'padding-bottom': padding}">
+                <mat-form-field appearance="fill" class="flex-fill" color="accent">
                     <mat-label>Password</mat-label>
                     <input matInput [formControl]="password" [type]="hide ? 'password' : 'text'">
                     <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                         <mat-icon matSuffix aria-hidden="false" aria-label="Example visibility icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </button>
-                    <!-- <mat-error *ngIf="password.invalid">{{getErrorMessage(password)}}</mat-error> -->
                     <mat-error *ngFor="let item of getErrorMessage(password)">{{item}}</mat-error>
                 </mat-form-field>
                 <div class="row mt-3 g-0">

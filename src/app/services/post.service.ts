@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Comment } from '../models/comment';
 import { Post } from '../models/post';
 import { AuthService } from './auth.service';
+import { AngularFirestore, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 let posts: Array<Post> = [
   {
@@ -130,86 +132,99 @@ if(!JSON.parse(localStorage.getItem(postsKey)))
 // })
 @Injectable()
 export class PostService {
-
-  
-  time = new Observable<string>(observer => {
-    setInterval(() => {
-      observer.next(new Date().toString());
-    }
-      , 1000);
-  });
+  private pageId: number;
+  public postsAmount$;
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private storage: AngularFireStorage,
+    private db: AngularFirestore,
   ) {
       //let postsArray = JSON.parse(localStorage.getItem(postsKey)) || [];
+      //this.getPosts1(3);
+      //console.log(this.router.url);
+      this.postsAmount$ = this.db.collection('posts').get()
   }
 
   getPost(id: string): Post {
     let postNum = parseInt(this.router.url[this.router.url.length-1]);
     return postsArray.find(x => x.id == postNum.toString());
   }
-  getPosts(pageId?): Array<Post> {
-    let tempArray = [];
-    if(postsArray.length >= 3*pageId) {
-      tempArray.push(postsArray[postsArray.length-(3*pageId)+2]);
-      tempArray.push(postsArray[postsArray.length-(3*pageId)+1]);
-      tempArray.push(postsArray[postsArray.length-(3*pageId)]);
+  public getPosts$ = new Observable((observer) => {
+    let tempArray: Array<Post> = [];
+    let pageId = parseInt(this.router.url.slice(1));
+  
+    if(pageId*3 >= 7) {
+      //let postsAmount = this.getPostsAmount1();
+      this.db.collection('posts', ref => ref.where('id', 'in', [1,2,3]))
+      .get()
+      .subscribe({
+        next: (x)=> {
+          x.forEach((doc:QueryDocumentSnapshot<Post>) => {
+            tempArray.push(doc.data());
+          });
+          observer.next(tempArray);
+        }
+      })
     }
-    else {
-      tempArray.push(postsArray[postsArray.length-(3*pageId)+4]);
-      tempArray.push(postsArray[postsArray.length-(3*pageId)+3]);
-      tempArray.push(postsArray[postsArray.length-(3*pageId)+2]);
+    else if(pageId*3 < 7) {
+      //let postsAmount = this.getPostsAmount1();
+      this.db.collection('posts', ref => ref.where('id', 'in', [8-pageId*3,9-pageId*3,10-pageId*3]))
+      .get()
+      .subscribe({
+        next: x=> {
+          x.forEach( (doc:QueryDocumentSnapshot<Post>) => {
+            tempArray.push(doc.data());
+          });
+          observer.next(tempArray);
+        }
+      })
     }
-    return tempArray;
-  }
+  });
   getLastPageNumber() {
     return Math.ceil(postsArray.length/3);
   }
-  getPostsAmount(): number {
-    return postsArray.length;
-  }
-  getComments(): Array<Comment> {
-    let postNum = parseInt(this.router.url[this.router.url.length-1]);
-    return postsArray.find(x => x.id == postNum.toString()).comments;
-  }
-  getCommentsAmount(): number {
-    let postNum = parseInt(this.router.url[this.router.url.length-1]);
-    return postsArray.find(x => x.id == postNum.toString()).comments.length;
-  }
-  savePost(updatedPost: Post): void {
-    let postNum = parseInt(this.router.url[this.router.url.length-1]);
-    postsArray[postNum] = updatedPost;
-    localStorage.setItem(postsKey, JSON.stringify(postsArray));
-  }
-  deletePost(deletedPost: Post): void {
-    let postNum = parseInt(this.router.url[this.router.url.length-1]);
-    postsArray = postsArray.filter(e => +e.id !== postNum);
-    localStorage.setItem(postsKey, JSON.stringify(postsArray));
-  }
-  addComment(comment: string): void {
-    let tmpName: string;
-    this.authService.authState().subscribe({
-      next: (x) => {
-        if (x) {
-          tmpName = x.displayName;
-        }
-      }
-    });
-    let postNum = postsArray.length - parseInt(this.router.url[this.router.url.length-1]);
-    postsArray[postNum]
-      .comments.push({
-        post: postNum.toString(),
-        id: this.getComments().length.toString(),
-        name: tmpName,
-        role: 'guest',
-        content: comment,
-        img: '../../assets/img/guest-icon.jpg'
-      });
-    localStorage.setItem(postsKey, JSON.stringify(postsArray));
-    //console.log(posts);
-  }
+  // getComments(): Array<Comment> {
+  //   let postNum = parseInt(this.router.url[this.router.url.length-1]);
+  //   return postsArray.find(x => x.id == postNum.toString()).comments;
+  // }
+  // getCommentsAmount(): number {
+  //   let postNum = parseInt(this.router.url[this.router.url.length-1]);
+  //   return postsArray.find(x => x.id == postNum.toString()).comments.length;
+  // }
+  // savePost(updatedPost: Post): void {
+  //   let postNum = parseInt(this.router.url[this.router.url.length-1]);
+  //   postsArray[postNum] = updatedPost;
+  //   localStorage.setItem(postsKey, JSON.stringify(postsArray));
+  // }
+  // deletePost(deletedPost: Post): void {
+  //   let postNum = parseInt(this.router.url[this.router.url.length-1]);
+  //   postsArray = postsArray.filter(e => +e.id !== postNum);
+  //   localStorage.setItem(postsKey, JSON.stringify(postsArray));
+  // }
+  // addComment(comment: string): void {
+  //   let tmpName: string;
+  //   this.authService.authState().subscribe({
+  //     next: (x) => {
+  //       if (x) {
+  //         tmpName = x.displayName;
+  //       }
+  //     }
+  //   });
+  //   let postNum = postsArray.length - parseInt(this.router.url[this.router.url.length-1]);
+  //   postsArray[postNum]
+  //     .comments.push({
+  //       post: postNum.toString(),
+  //       id: this.getComments().length.toString(),
+  //       name: tmpName,
+  //       role: 'guest',
+  //       content: comment,
+  //       img: '../../assets/img/guest-icon.jpg'
+  //     });
+  //   localStorage.setItem(postsKey, JSON.stringify(postsArray));
+  //   //console.log(posts);
+  // }
 }
 
 //const postServiceFactory = () => new PostService();

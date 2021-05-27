@@ -3,9 +3,14 @@ export class User {
     lastName: string;
     username: string;
     email: string;
-    password: string;
 };
 export class UserInfo {
     username: string;
     email: string;
 }
+export interface UserDetails {
+    username: string;
+    email: string;
+    name: string;
+    surname: string;
+  }

@@ -21,7 +21,7 @@ export class PostComponent implements OnInit {
     ) {
       this.route.params.subscribe(params => {
         this.id = params.id;
-        this.post = this.postService.getPost(this.id);
+        //this.post = this.postService.getPost(this.id);
       });
       document.body.scrollTop = 0;
     }
@@ -33,10 +33,10 @@ export class PostComponent implements OnInit {
   }
   savePost(): void {
     this.isPostEdit = false;
-    this.postService.savePost(this.post);
+    //this.postService.savePost(this.post);
   }
   deletePost(): void {
-    this.postService.deletePost(this.post);
+    //this.postService.deletePost(this.post);
     this.router.navigate(['']);
   }
 

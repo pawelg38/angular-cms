@@ -24,7 +24,7 @@ export class CommentComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.id = params.id;
 
-      this.comments = this.postService.getComments();
+      //this.comments = this.postService.getComments();
       //console.log(this.isCommentEdit);
     });
   }
