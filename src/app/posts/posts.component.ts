@@ -21,6 +21,7 @@ export class PostsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private storage: AngularFireStorage) {
+      console.log("step1");
 
       document.body.scrollTop = 0;
       
@@ -32,14 +33,14 @@ export class PostsComponent implements OnInit {
         else if (this.postService.getLastPageNumber() < parseInt(this.pageId)) {
             this.router.navigate([this.postService.getLastPageNumber().toString()]);
         }
+        this.postService.getPosts$.subscribe({
+          next: (x:Array<Post>) => {
+            this.posts = x;
+            this.posts.sort(this.comparePosts);
+            this.updatePostsImagesPaths(this.posts);
+          }
+        })
       });
-      this.postService.getPosts$.subscribe({
-        next: (x:Array<Post>) => {
-          this.posts = x;
-          this.posts.sort(this.comparePosts);
-          this.updatePostsImagesPaths(this.posts);
-        }
-      })
       this.postService.postsAmount$.subscribe({
         next: snap => {
           this.sitesAmount = Math.ceil(snap.size/3);
