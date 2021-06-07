@@ -5,7 +5,7 @@ export interface Post {
     id: string;
     title: string;
     img?: string;
-    minImg: string;
+    minImg?: string;
     medImg?: string;
     hdImg?: string;
     content?: {
@@ -15,4 +15,5 @@ export interface Post {
     };
     comments?: Array<Comment>;
     extraImg?: BehaviorSubject<string>
+    isReady?: boolean;
 }

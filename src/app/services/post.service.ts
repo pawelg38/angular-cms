@@ -134,57 +134,70 @@ if(!JSON.parse(localStorage.getItem(postsKey)))
 export class PostService {
   private pageId: number;
   public postsAmount$;
+  public postsAmount;
+  public getPost$: Observable<Post>;
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private storage: AngularFireStorage,
-    private db: AngularFirestore,
+    private fbDB: AngularFirestore,
   ) {
-      //let postsArray = JSON.parse(localStorage.getItem(postsKey)) || [];
-      //this.getPosts1(3);
-      //console.log(this.router.url);
-      this.postsAmount$ = this.db.collection('posts').get()
+      this.postsAmount$ = this.fbDB.collection('posts').get()
+      this.postsAmount$.subscribe({
+        next: x => {
+          this.postsAmount = x.size;
+        }
+      })
   }
-
-  getPost(id: string): Post {
-    let postNum = parseInt(this.router.url[this.router.url.length-1]);
-    return postsArray.find(x => x.id == postNum.toString());
+  getPost(id: number) {
+    this.getPost$ = new Observable((observer) => {
+      this.fbDB.collection('posts',ref => ref.where('id', '==', id))
+      .get().subscribe({
+        next: x => {
+          x.forEach((doc:QueryDocumentSnapshot<Post>) => {
+            observer.next(doc.data());
+          });
+        }
+      })
+    })
   }
   public getPosts$ = new Observable((observer) => {
     let tempArray: Array<Post> = [];
     let pageId = parseInt(this.router.url.slice(1));
-  
-    if(pageId*3 >= 7) {
-      //let postsAmount = this.getPostsAmount1();
-      this.db.collection('posts', ref => ref.where('id', 'in', [1,2,3]))
-      .get()
-      .subscribe({
-        next: (x)=> {
-          x.forEach((doc:QueryDocumentSnapshot<Post>) => {
-            tempArray.push(doc.data());
-          });
-          observer.next(tempArray);
+
+    this.postsAmount$.subscribe({
+      next: x => 
+      {
+        if(pageId*3 >= x.size) {
+          //let postsAmount = this.getPostsAmount1();
+          this.fbDB.collection('posts', ref => ref.limit(3).orderBy('id', 'asc'))
+          .get()
+          .subscribe({
+            next: (x)=> {
+              x.forEach((doc:QueryDocumentSnapshot<Post>) => {
+                tempArray.push(doc.data());
+              });
+              observer.next(tempArray);
+            }
+          })
         }
-      })
-    }
-    else if(pageId*3 < 7) {
-      //let postsAmount = this.getPostsAmount1();
-      this.db.collection('posts', ref => ref.where('id', 'in', [8-pageId*3,9-pageId*3,10-pageId*3]))
-      .get()
-      .subscribe({
-        next: x=> {
-          x.forEach( (doc:QueryDocumentSnapshot<Post>) => {
-            tempArray.push(doc.data());
-          });
-          observer.next(tempArray);
+        else if(pageId*3 < x.size) {
+          this.fbDB.collection('posts', ref => ref.limit(3).orderBy('id', 'asc').startAfter(x.size - pageId*3))
+          .get()
+          .subscribe({
+            next: x=> {
+              x.forEach( (doc:QueryDocumentSnapshot<Post>) => {
+                tempArray.push(doc.data());
+              });
+              observer.next(tempArray);
+            }
+          })
         }
-      })
-    }
+      }
+    })
   });
-  getLastPageNumber() {
-    return Math.ceil(postsArray.length/3);
-  }
   // getComments(): Array<Comment> {
   //   let postNum = parseInt(this.router.url[this.router.url.length-1]);
   //   return postsArray.find(x => x.id == postNum.toString()).comments;

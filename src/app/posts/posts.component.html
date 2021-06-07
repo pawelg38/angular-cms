@@ -4,11 +4,12 @@
             <a routerLink="/post/{{post.id}}" routerLinkActive="active">
             <!-- <a routerLink="" routerLinkActive="active"> -->
                 <div class="row g-0">
-                    <div class="col-auto">
-                        <!-- <img class="mat-elevation-z6" [src]="'../../assets/img/'+post.minImg" alt=""> -->
-                        <!-- <img class="mat-elevation-z6" [src]="post.minImg" alt=""> -->
-                        <img class="mat-elevation-z6" [src]="post.extraImg | async" alt="">
+                    <div *ngIf="post.isReady===true" class="col-auto">
+                        <img class="mat-elevation-z6" [src]="post.minImg" alt="">
                     </div>
+                    <!-- <div class="col-auto">
+                        <img class="mat-elevation-z6" [src]="post.extraImg | async" alt="">
+                    </div> -->
                     <div class="col postContent">
                         <div class="px-3 pt-3 pb-2">
                             <a routerLink="/post/{{post.id}}" routerLinkActive="active">

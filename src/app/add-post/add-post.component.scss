@@ -41,12 +41,29 @@
             color: #fff;
         }
     }
-    label {
-        color: #fff;
-        border-radius: 20px;
-        padding: 8px 16px;
-        //position: absolute;
-        margin: 0 auto;
+    // label {
+    //     //color: #fff;
+    //     border-radius: 20px;
+    //     padding: 8px 16px;
+    //     //position: absolute;
+    //     //margin: 0 auto;
+    //     margin: 0;
+    // }
+    .upload-button-box {
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        button {
+            padding: 0;
+            label {
+                //color: #fff;
+                border-radius: 20px;
+                padding: 0px 10px;
+                //position: absolute;
+                //margin: 0 auto;
+                margin: 0;
+            }
+        }
     }
 }
 .files-list {

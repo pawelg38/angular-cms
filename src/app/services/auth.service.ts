@@ -24,10 +24,8 @@ export class AuthService {
 
       this.fireAuth.onAuthStateChanged((user) => {
         if (user) {
-          console.log("user signed in");
           this.userLoggedIn.next(user);
         } else {
-          console.log("no user signed in");
           this.userLoggedIn.next(false);
         }
       });
@@ -70,8 +68,6 @@ export class AuthService {
       //console.log("logging in: step2: errors");
       var errorCode = error.code;
       var errorMessage = error.message;
-      console.log(errorCode);
-      console.log(errorMessage);
     });
   }
   register(user: User, password: string) {
@@ -104,13 +100,11 @@ export class AuthService {
   }
  
   logout() {
-    console.log("loggin out: step1: success");
     this.fireAuth.signOut()
     .then( () => {
       this.router.navigate(['login']);
     })
     .catch((error) => {
-      console.log("loggin out: step3: errors");
       console.log(error.code);
       console.log(error.message);
     });

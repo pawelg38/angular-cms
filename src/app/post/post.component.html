@@ -1,8 +1,8 @@
-<div class="row text-center g-0">
+<div *ngIf="post" class="row text-center g-0">
     <div class="col-12 px-5 py-5 contentDiv">
         <h1 class="my-4">{{post.title}}</h1>
     </div>
-    <div class="col-12 parallax-background parallax-background-image-{{post.id}}">
+    <div class="col-12 parallax-background" style="background-image: url({{post.hdImg}});">
     </div>
     <div class="col-12 px-5 py-5 contentDiv">
         <p>{{post.content.akapit1}}</p>
@@ -14,7 +14,7 @@
         <p>{{post.content.akapit2}}</p>
         <p>{{post.content.akapit3}}</p>
     </div>
-    <div class="col-12 parallax-background parallax-background-image-{{post.id}}">
+    <div class="col-12 parallax-background" style="background-image: url({{post.hdImg}});">
     </div>
     <!-- <div class="parallax-background-mask"> -->
     <!-- <div class="col-6 py-5 mx-auto"> -->

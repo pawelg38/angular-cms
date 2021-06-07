@@ -9,7 +9,7 @@ import { PostTransformPipe } from './pipes/post-transform.pipe';
 import { PageComponent } from './page/page.component';
 import { CommentComponent } from './comment/comment.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PostService, postServiceProvider } from './services/post.service';
+import { postServiceProvider } from './services/post.service';
 import { RegisterComponent } from './register/register.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoginComponent } from './login/login.component'
@@ -61,7 +61,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {OverlayModule} from '@angular/cdk/overlay';
 import { FooterComponent } from './footer/footer.component';
-import { AddingPostComponent } from './adding-post/adding-post.component';
+import { AddPostComponent } from './add-post/add-post.component';
 import { DragndropDirective } from './directives/dragndrop.directive';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
@@ -92,7 +92,7 @@ var firebaseConfig = {
     RegisterComponent,
     LoginComponent,
     FooterComponent,
-    AddingPostComponent,
+    AddPostComponent,
     DragndropDirective
   ],
   imports: [

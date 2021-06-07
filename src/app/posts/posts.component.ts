@@ -21,23 +21,29 @@ export class PostsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private storage: AngularFireStorage) {
-      console.log("step1");
 
       document.body.scrollTop = 0;
       
       this.route.params.subscribe(params => {
         this.pageId = params.id;
-        if (parseInt(this.pageId) < 1) {
-          this.router.navigate(['1']);
-        }
-        else if (this.postService.getLastPageNumber() < parseInt(this.pageId)) {
-            this.router.navigate([this.postService.getLastPageNumber().toString()]);
-        }
-        this.postService.getPosts$.subscribe({
-          next: (x:Array<Post>) => {
-            this.posts = x;
-            this.posts.sort(this.comparePosts);
-            this.updatePostsImagesPaths(this.posts);
+        this.postService.postsAmount$.subscribe({
+          next: x => {
+            if (parseInt(this.pageId) < 1) {
+              this.router.navigate(['1']);
+            }
+            else if (parseInt(this.pageId) > Math.ceil(x.size/3)) {
+              this.router.navigate([(Math.ceil(x.size/3)).toString()]);
+            }
+            else {
+            this.postService.getPosts$.subscribe({
+              next: (x:Array<Post>) => {
+                this.posts = x;
+                this.posts.sort(this.comparePosts);
+                this.updatePostsImagesPaths(this.posts[0]);
+                this.updatePostsImagesPaths(this.posts[1]);
+                this.updatePostsImagesPaths(this.posts[2]);
+              }
+            })}
           }
         })
       });
@@ -54,40 +60,30 @@ export class PostsComponent implements OnInit {
        return -1
     return 0
  }
-  updatePostsImagesPaths(posts: Array<Post>) {
-    let ref1 = this.storage.ref("posts/"+posts[0].id+"_min.jpg");
-    let ref2 = this.storage.ref("posts/"+posts[1].id+"_min.jpg");
-    let ref3 = this.storage.ref("posts/"+posts[2].id+"_min.jpg");
-    let imgUrlObs1 = ref1.getDownloadURL();
-    let imgUrlObs2 = ref2.getDownloadURL();
-    let imgUrlObs3 = ref3.getDownloadURL();
-    imgUrlObs1.subscribe({
-        next: x => {
-          posts[0].extraImg = new BehaviorSubject<string>('test');
-          posts[0].extraImg.next(x);
-        }
-    })
-    imgUrlObs2.subscribe({
-        next: x => {
-          posts[1].extraImg = new BehaviorSubject<string>('test');
-          posts[1].extraImg.next(x);
-        }
-    })
-    imgUrlObs3.subscribe({
-        next: x => {
-          posts[2].extraImg = new BehaviorSubject<string>('test');
-          posts[2].extraImg.next(x);
-        }
-    })
+  updatePostsImagesPaths(posts: Post) {
+    this.storage.ref("posts/"+posts.minImg).getDownloadURL().subscribe({
+      next: x => {
+        posts.minImg = x;
+        posts.isReady = true;
+      }
+    });
   }
   refreshInputValue(event: any) {
     this.pageId = this.pageId || this.route.snapshot.url[0].path;
   }
   nextPage() {
-    this.router.navigate([(parseInt(this.pageId)+1).toString()]);
+    this.postService.postsAmount$.subscribe({
+      next: x => {
+        if (parseInt(this.pageId) < Math.ceil(x.size/3)) {
+          this.router.navigate([(parseInt(this.pageId)+1).toString()]);
+        }
+      }
+    })
   }
   previousPage() {
-    this.router.navigate([(parseInt(this.pageId)-1).toString()]);
+    if (parseInt(this.pageId) > 1) {
+      this.router.navigate([(parseInt(this.pageId)-1).toString()]);
+    }
   }
 
   ngOnInit(): void {
