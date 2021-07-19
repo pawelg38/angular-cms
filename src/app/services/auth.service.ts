@@ -18,12 +18,14 @@ export class AuthService {
   public userLoggedIn = new BehaviorSubject(null);
 
   constructor(
-    private fireAuth: AngularFireAuth,
+    public fireAuth: AngularFireAuth,
     private db: AngularFirestore,
     private router: Router) {
 
       this.fireAuth.onAuthStateChanged((user) => {
         if (user) {
+          console.log("user signed in");
+          console.log(user);
           this.userLoggedIn.next(user);
         } else {
           this.userLoggedIn.next(false);
@@ -49,26 +51,25 @@ export class AuthService {
     // }
     return this.fireAuth.authState;
   }
+  getData() {
+    this.fireAuth.authState
+    .subscribe( res => {
+      if (res) {
+        console.log("res: ", res);
+        console.log("getData() runs");
+        this.db.collection('posts').valueChanges()
+        .subscribe( res => console.log(res));
+      }
+      else {
+        console.log("res err: ", res);
+      }
+    })
+  }
 
   login({email, password}: Credentials) {
     this.fireAuth.signInWithEmailAndPassword(email, password)
-    .then(user => {
-      //console.log("logging in: step1 pomyslnie");
-      //console.log(user.user.displayName);
-      this.fireAuth.onAuthStateChanged(user => {
-        if (user) {
-          //console.log("User is signed in.")
-        } else {
-          //console.log("No user is signed in.")
-        }
-      });
-      this.router.navigate(['']);
-    })
-    .catch((error) => {
-      //console.log("logging in: step2: errors");
-      var errorCode = error.code;
-      var errorMessage = error.message;
-    });
+    .then( () => this.router.navigate(['']) )
+    .catch( error => console.log("loggin error"));
   }
   register(user: User, password: string) {
     this.fireAuth.createUserWithEmailAndPassword(user.email, password)

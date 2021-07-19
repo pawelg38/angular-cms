@@ -1,5 +1,21 @@
 {
   "projects": {
     "default": "angularcms-470bb"
+  },
+  "targets": {
+    "portfolio-v2-8fcc9": {
+      "hosting": {
+        "angular-cms": [
+          "portfolio-v2-8fcc9"
+        ]
+      }
+    },
+    "angularcms-470bb": {
+      "hosting": {
+        "angular-cms": [
+          "angularcms-470bb"
+        ]
+      }
+    }
   }
 }

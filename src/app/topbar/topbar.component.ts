@@ -63,6 +63,9 @@ export class TopbarComponent implements OnInit {
       }, 50);
     }
   }
+  getData() {
+    this.authService.getData();
+  }
 
   constructor(private authService: AuthService) {
     //this.loggedIn = false;

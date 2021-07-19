@@ -4,6 +4,7 @@ import { Post } from '../models/post';
 import { PostService } from '../services/post.service';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-posts',
@@ -17,6 +18,7 @@ export class PostsComponent implements OnInit {
   sitesAmount: number;
 
   constructor(
+    private authService: AuthService,
     private postService: PostService,
     private route: ActivatedRoute,
     private router: Router,
@@ -35,14 +37,14 @@ export class PostsComponent implements OnInit {
               this.router.navigate([(Math.ceil(x.size/3)).toString()]);
             }
             else {
-            this.postService.getPosts$.subscribe({
-              next: (x:Array<Post>) => {
-                this.posts = x;
-                this.posts.sort(this.comparePosts);
-                this.updatePostsImagesPaths(this.posts[0]);
-                this.updatePostsImagesPaths(this.posts[1]);
-                this.updatePostsImagesPaths(this.posts[2]);
-              }
+              this.postService.getPosts$.subscribe({
+                next: (x:Array<Post>) => {
+                  this.posts = x;
+                  this.posts.sort(this.comparePosts);
+                  this.updatePostsImagesPaths(this.posts[0]);
+                  this.updatePostsImagesPaths(this.posts[1]);
+                  this.updatePostsImagesPaths(this.posts[2]);
+                }
             })}
           }
         })

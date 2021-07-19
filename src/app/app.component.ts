@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 //import { slideInAnimation } from 'src/animations/slideInAnimation';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',

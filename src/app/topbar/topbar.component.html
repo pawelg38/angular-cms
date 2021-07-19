@@ -4,6 +4,7 @@
             <img src="../../assets/img/angular_whiteTransparent_min.png" alt="">
             AngularCMS
         </a>
+        <button (click)="getData()">Pobierz z bazy</button>
     </div>
     <ng-container *ngIf="(loggedIn); then loggedInTemp"></ng-container>
     <ng-template #loggedInTemp>
