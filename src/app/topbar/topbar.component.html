@@ -4,17 +4,13 @@
             <img src="../../assets/img/angular_whiteTransparent_min.png" alt="">
             AngularCMS
         </a>
-        <button (click)="getData()">Pobierz z bazy</button>
     </div>
-    <ng-container *ngIf="(loggedIn); then loggedInTemp"></ng-container>
-    <ng-template #loggedInTemp>
-        <div class="col d-flex">
-            <div class="ms-auto menuBarContainer px-3">
+    <div *ngIf="authService.userLoggedIn | async" class="col d-flex">
+        <div class="ms-auto menuBarContainer px-3">
             <div class="menuRoll px-4 d-flex justify-content-center align-items-center">
-                Hi!<a mat-mini-fab color="primary" class="ms-2 me-4">{{userInfo[0]|uppercase}}</a>
-                <!-- Hi!<a mat-mini-fab color="primary" routerLink="" class="ms-2 me-4" routerLinkActive="active">TT</a> -->
-                <div class="menuDroppedBox px-3 pb-3" *ngIf="isMenuDroppedDown">
-                    <div class="menuContainer mx-auto mat-elevation-z8" [ngClass]="{'menuDropAnimation1': !isMenuAnimationOn, 'menuDropAnimation2': isMenuAnimationOn}">
+                Hi!<a mat-mini-fab color="primary" class="ms-2 me-4">{{(authService.userLoggedIn | async).email[0] | uppercase}}</a>
+                <div [@menuDropDown] *ngIf="isMenuDroppedDown" class="menuDroppedBox px-3 pb-3" >
+                    <div class="menuContainer mx-auto mat-elevation-z8">
                         <div class="menuItem text-center py-2">
                             <a routerLink="/add-new-post" routerLinkActive="active" mat-raised-button>Add new post</a>
                         </div>
@@ -36,14 +32,13 @@
                     </div>
                 </div>
                 <div>
-                    <button class="mat-elevation-z2 menuDropDownButton" mat-icon-button (click)="menuDropDown()">
+                    <button class="mat-elevation-z2 menuDropDownButton" mat-icon-button (click)="menuToggle()">
                         <mat-icon class="menuDropDownIcon"color="primary" aria-hidden="false" aria-label="Show more icon">
                             more_vert
                         </mat-icon>
                     </button>
                 </div>
             </div>
-            </div>
         </div>
-    </ng-template>
+    </div>
 </div>

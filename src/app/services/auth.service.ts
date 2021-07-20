@@ -25,7 +25,7 @@ export class AuthService {
       this.fireAuth.onAuthStateChanged((user) => {
         if (user) {
           console.log("user signed in");
-          console.log(user);
+          //console.log(user);
           this.userLoggedIn.next(user);
         } else {
           this.userLoggedIn.next(false);
@@ -55,7 +55,6 @@ export class AuthService {
     this.fireAuth.authState
     .subscribe( res => {
       if (res) {
-        console.log("res: ", res);
         console.log("getData() runs");
         this.db.collection('posts').valueChanges()
         .subscribe( res => console.log(res));
