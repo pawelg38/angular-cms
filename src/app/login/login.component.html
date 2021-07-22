@@ -36,6 +36,8 @@
                 </div>
             </div>
         </form>
+        <!-- <span class="mx-auto mt-4">Type your login and password or:</span> -->
+        <button (click)="signInWithGoogleHandler()" type="button" class="signInWithGoogleBtn mt-4 py-3">Sign in with Google</button>
     </div>
     <div (click)="test()" [ngClass]="{'blackFogAnimation1': !isAnimationOn, 'blackFogAnimation2': isAnimationOn}"></div>
     <div *ngIf="!isAnimatedElementHidden" class="col-2 my-5 ms-auto" [ngClass]="{'fromLeftToRightAnimation1': !isAnimationOn, 'fromLeftToRightAnimation2': isAnimationOn}">

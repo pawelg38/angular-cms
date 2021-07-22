@@ -9,7 +9,7 @@ import { PostTransformPipe } from './pipes/post-transform.pipe';
 import { PageComponent } from './page/page.component';
 import { CommentComponent } from './comment/comment.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { postServiceProvider } from './services/post.service';
+import { PostService } from './services/post.service';
 import { RegisterComponent } from './register/register.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoginComponent } from './login/login.component'
@@ -147,7 +147,8 @@ import { AuthService } from './services/auth.service';
   //providers: [{provide: PostService, useClass: PostService}],
   providers: [
     AuthService,
-    postServiceProvider,
+    //postServiceProvider,
+    PostService,
     PaginationService
   ],
   bootstrap: [AppComponent],

@@ -1,57 +1,66 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from '../models/post';
 import { PostService } from '../services/post.service';
 import { AngularFireStorage } from '@angular/fire/storage';
-import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
-export class PostsComponent implements OnInit {
+export class PostsComponent implements OnInit, OnDestroy {
 
   public posts: Array<Post> = [];
   pageId: string;
   sitesAmount: number;
+  public test=0;
+  public sub;
+  public sub2;
+  public sub3;
+
+  ngOnDestroy(): void {
+    console.log("ngOnDestroy() runs");
+    this.sub.unsubscribe();
+    this.sub2.unsubscribe();
+    this.sub3.unsubscribe();
+  }
 
   constructor(
     private authService: AuthService,
-    private postService: PostService,
+    public postService: PostService,
     private route: ActivatedRoute,
     private router: Router,
     private storage: AngularFireStorage) {
+      console.log("constructor() runs");
 
       document.body.scrollTop = 0;
       
-      this.route.params.subscribe(params => {
+      this.sub3 = this.route.params.subscribe(params => {
         this.pageId = params.id;
-        this.postService.postsAmount$.subscribe({
-          next: x => {
-            if (parseInt(this.pageId) < 1) {
-              this.router.navigate(['1']);
-            }
-            else if (parseInt(this.pageId) > Math.ceil(x.size/3)) {
-              this.router.navigate([(Math.ceil(x.size/3)).toString()]);
-            }
-            else {
-              this.postService.getPosts$.subscribe({
-                next: (x:Array<Post>) => {
-                  this.posts = x;
-                  this.posts.sort(this.comparePosts);
-                  this.updatePostsImagesPaths(this.posts[0]);
-                  this.updatePostsImagesPaths(this.posts[1]);
-                  this.updatePostsImagesPaths(this.posts[2]);
-                }
-            })}
+        console.log(this.pageId);
+        console.log("cos1");
+        this.sub = this.postService.getPosts$.subscribe({
+          next: (x:Array<any>)=> {
+            console.log("cos2");
+            console.log(x);
+            this.test = x.length;
+            this.posts = x;
+            this.posts.reverse();
+            this.updatePostsImagesPaths(this.posts[0]);
+            this.updatePostsImagesPaths(this.posts[1]);
+            this.updatePostsImagesPaths(this.posts[2]);
+          },
+          complete: () => {
+            console.log("complete");
           }
         })
       });
-      this.postService.postsAmount$.subscribe({
-        next: snap => {
-          this.sitesAmount = Math.ceil(snap.size/3);
+      this.sub2 = this.postService.postsAmount$.subscribe({
+        next: (snap: number) => {
+          this.sitesAmount = Math.ceil(snap/3);
         }
       })
   }
@@ -63,10 +72,11 @@ export class PostsComponent implements OnInit {
     return 0
  }
   updatePostsImagesPaths(posts: Post) {
-    this.storage.ref("posts/"+posts.minImg).getDownloadURL().subscribe({
+    let d = this.storage.ref("posts/"+posts.minImg).getDownloadURL().subscribe({
       next: x => {
         posts.minImg = x;
         posts.isReady = true;
+        d.unsubscribe();
       }
     });
   }
@@ -74,20 +84,23 @@ export class PostsComponent implements OnInit {
     this.pageId = this.pageId || this.route.snapshot.url[0].path;
   }
   nextPage() {
-    this.postService.postsAmount$.subscribe({
-      next: x => {
-        if (parseInt(this.pageId) < Math.ceil(x.size/3)) {
+      console.log(this.sitesAmount);
+        if (parseInt(this.pageId) < this.sitesAmount) {
+          console.log("no i co?: ", this.sitesAmount);
+          this.sub.unsubscribe();
           this.router.navigate([(parseInt(this.pageId)+1).toString()]);
         }
-      }
-    })
   }
   previousPage() {
+    console.log("step1", this.pageId);
     if (parseInt(this.pageId) > 1) {
+      console.log("step2", this.pageId);
+      this.sub.unsubscribe();
       this.router.navigate([(parseInt(this.pageId)-1).toString()]);
     }
   }
 
   ngOnInit(): void {
+    console.log("ngOnInit() runs");
   }
 }

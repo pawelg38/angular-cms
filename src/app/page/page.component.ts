@@ -11,11 +11,11 @@ export class PageComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute) {
-      this.route.params.subscribe(x => {
-        if(x.id == 0 || x.id == undefined) {
-          this.router.navigate(['/1']);
-        }
-      })
+      // this.route.params.subscribe(x => {
+      //   if(x.id == 0 || x.id == undefined) {
+      //     this.router.navigate(['/1']);
+      //   }
+      // })
   }
 
   ngOnInit(): void {

@@ -5,12 +5,16 @@
             AngularCMS
         </a>
     </div>
-    <div *ngIf="authService.userLoggedIn | async" class="col d-flex">
+    <div *ngIf="userLoggedIn" class="col d-flex">
         <div class="ms-auto menuBarContainer px-3">
             <div class="menuRoll px-4 d-flex justify-content-center align-items-center">
-                Hi!<a mat-mini-fab color="primary" class="ms-2 me-4">{{(authService.userLoggedIn | async).email[0] | uppercase}}</a>
+                Hi!
+                <img *ngIf="userLoggedIn.photoURL; else elseBlock" [src]="userLoggedIn.photoURL"/>
+                <ng-template #elseBlock>
+                    <a mat-mini-fab color="primary" class="ms-2 me-4">{{userLoggedIn.email[0] | uppercase}}</a>
+                </ng-template>
                 <div [@menuDropDown] *ngIf="isMenuDroppedDown" class="menuDroppedBox px-3 pb-3" >
-                    <div class="menuContainer mx-auto mat-elevation-z8">
+                    <div (click)="menuToggle()" class="menuContainer mx-auto mat-elevation-z8">
                         <div class="menuItem text-center py-2">
                             <a routerLink="/add-new-post" routerLinkActive="active" mat-raised-button>Add new post</a>
                         </div>

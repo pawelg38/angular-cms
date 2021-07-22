@@ -23,6 +23,7 @@
                 </div>
                 <div class="w-100"></div>
                 <div class="col">
+                    url: {{downloadURL | async}}<br/>
                     Dodaj zdjęcie (1920x1080px)
                     <div class="upload-box">
                         <div class="drop-zone" appDragndrop (fileDropped)="onFileDropped($event)">

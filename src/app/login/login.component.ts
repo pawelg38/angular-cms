@@ -41,6 +41,10 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService) {
+
+      this.authService.fireAuthUser.subscribe(x => {
+        if(x) this.router.navigate([''])
+      })
   }
   test() {
     if (this.isAnimatedElementHidden) {
@@ -56,7 +60,10 @@ export class LoginComponent implements OnInit {
       }, 100);
     }
   }
-
+  
+  signInWithGoogleHandler() {
+    this.authService.signInWithGoogle();
+  }
 
   registerBtn() {
     if (this.isAlternateMode == false)
@@ -89,7 +96,7 @@ export class LoginComponent implements OnInit {
       }, 200);
       return;
     }
-    this.authService.login({email: this.email.value, password: this.password.value})
+    this.authService.signInWithEmailAndPassword({email: this.email.value, password: this.password.value})
   }
   
   ngOnInit(): void {

@@ -1,156 +1,33 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { observable, Observable, fromEvent, interval, Subject, AsyncSubject, BehaviorSubject } from 'rxjs';
+import { switchMap, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { Comment } from '../models/comment';
 import { Post } from '../models/post';
 import { AuthService } from './auth.service';
-import { AngularFirestore, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentData, DocumentSnapshot, QueryDocumentSnapshot, QueryFn, QuerySnapshot } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 
-let posts: Array<Post> = [
-  {
-    id: '1',
-    title: 'Super Cars Your Grandpas wont believe',
-    img: '1.jpg',
-    minImg: '1_min.jpg',
-    medImg: '1_med.jpg',
-    hdImg: '1_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: []
-  },
-  {
-    id: '2',
-    title: 'Best ideas for lazy evening',
-    img: '2.jpg',
-    minImg: '2_min.jpg',
-    medImg: '2_med.jpg',
-    hdImg: '2_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: []
-  },
-  {
-    id: '3',
-    title: 'How to prepare for a first recruit meeting',
-    img: '3.jpg',
-    minImg: '3_min.jpg',
-    medImg: '3_med.jpg',
-    hdImg: '3_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: []
-  },
-  {
-    id: '4',
-    title: '4 ways to change the way you think',
-    img: '4.jpg',
-    minImg: '4_min.jpg',
-    medImg: '4_med.jpg',
-    hdImg: '4_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: []
-  },
-  {
-    id: '5',
-    title: 'You never know who is on the other side',
-    img: '5.jpg',
-    minImg: '5_min.jpg',
-    medImg: '5_med.jpg',
-    hdImg: '5_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: []
-  },
-  {
-    id: '6',
-    title: 'Mysterious Places You should visit next summer',
-    img: '6.jpg',
-    minImg: '6_min.jpg',
-    medImg: '6_med.jpg',
-    hdImg: '6_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: [{
-      post: '6',
-      id: '1',
-      name: 'Paweł Graboś',
-      role: 'admin',
-      content: 'Noo bardzo fajny post omg sztos',
-      img: 'https://www.gravatar.com/avatar/6ff77b82c5d1037e052e6b284dc90045.jpg?s=64'
-    }]
-  },
-  {
-    id: '7',
-    title: 'Interesting Themes for your website',
-    img: '7.jpg',
-    minImg: '7_min.jpg',
-    medImg: '7_med.jpg',
-    hdImg: '7_hd.jpg',
-    content: {
-      akapit1: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi esse et sunt, illo iure assumenda quaerat eaque dolor facere libero ipsam commodi eius iusto tempore, voluptas soluta laboriosam veniam ab ea a, consequuntur inventore nihil! Magni, mollitia obcaecati officiis voluptatibus illum deleniti ad adipisci nobis blanditiis pariatur suscipit eaque. In eligendi molestias voluptatum fuga beatae suscipit rerum ut temporibus quo, dolores accusantium, similique vitae eos illo earum. Itaque facere, adipisci, culpa beatae repellendus a porro consectetur ipsa nam temporibus officia sit! Animi ratione numquam doloremque voluptas voluptates porro dolor autem nam deserunt vitae in ex vel modi omnis laudantium recusandae, minus maiores aut eligendi reiciendis possimus.',
-      akapit2: 'Optio assumenda perspiciatis quasi ullam corporis beatae consectetur vitae cum cumque delectus molestias ratione molestiae voluptatum, consequuntur, libero minima obcaecati aliquam nobis repellat voluptas eius nam doloremque. Sit earum consequatur dicta delectus alias repellat veniam iusto, nemo voluptas dolor explicabo! Corrupti ad aspernatur quos a. Labore nam repellendus quisquam accusamus non harum. At necessitatibus hic molestias iure officia? In necessitatibus quidem quasi, itaque, earum nulla aliquid suscipit laboriosam dolorum voluptatibus cumque, eius soluta dolorem quisquam sequi voluptas facere molestias aliquam consequuntur ad nemo eaque? Suscipit perspiciatis aspernatur deserunt distinctio perferendis. Eveniet neque ratione quaerat debitis libero fuga, reiciendis molestias, atque a soluta quibusdam voluptatem dolores.',
-      akapit3: 'In porro aut omnis, consectetur, atque dolorem rem, voluptates illum quis tempore veniam necessitatibus consequuntur. Ipsa nostrum nobis harum cum. Cupiditate repudiandae cum fugiat sint facilis.',
-    },
-    comments: [{
-      post: '7',
-      id: '1',
-      name: 'Paweł Graboś',
-      role: 'admin',
-      content: 'Noo bardzo fajny post omg sztos',
-      img: 'https://www.gravatar.com/avatar/6ff77b82c5d1037e052e6b284dc90045.jpg?s=64'
-    }]
-  }
-];
-const postsKey = 'postsArray';
-let postsArray: Array<Post>;
-if(!JSON.parse(localStorage.getItem(postsKey)))
-  localStorage.setItem(postsKey, JSON.stringify(posts));
-  postsArray = JSON.parse(localStorage.getItem(postsKey));
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
+// @Injectable()
 export class PostService {
   private pageId: number;
-  public postsAmount$;
   public postsAmount;
   public getPost$: Observable<Post>;
-
+  private postsCollection2;
+  private postsCollection$;
+  public tempArray2: Array<Post> = [];
+  public tempArray3: Subject<any> = new Subject();
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private storage: AngularFireStorage,
     private fbDB: AngularFirestore,
-  ) {
-      this.postsAmount$ = this.fbDB.collection('posts').get()
-      this.postsAmount$.subscribe({
-        next: x => {
-          this.postsAmount = x.size;
-        }
-      })
-  }
+  ) {}
   getPost(id: number) {
     this.getPost$ = new Observable((observer) => {
       this.fbDB.collection('posts',ref => ref.where('id', '==', id))
@@ -163,40 +40,76 @@ export class PostService {
       })
     })
   }
+  public postsAmount$ = new Observable((observer) => {
+    if(this.authService.fireAuthUser) {
+      var postsCollectionSub = this.fbDB.collection('posts').valueChanges()
+      .subscribe({
+        next: (x) => {
+          observer.next(x.length);
+        }
+      });
+    }
+    return {
+      unsubscribe() {
+        postsCollectionSub.unsubscribe();
+      }
+    };
+  });
+  
   public getPosts$ = new Observable((observer) => {
     let tempArray: Array<Post> = [];
-    let pageId = parseInt(this.router.url.slice(1));
+    let pageId = parseInt(this.router.url.slice(1)) ? parseInt(this.router.url.slice(1)) : 1;
+    var firstSub;
+    var nextSub;
+    var postsAmountSub;
+    var authServiceSub;
 
-    this.postsAmount$.subscribe({
-      next: x => 
+
+    postsAmountSub = this.postsAmount$.subscribe({
+      next: (x:number) => 
       {
-        if(pageId*3 >= x.size) {
-          //let postsAmount = this.getPostsAmount1();
-          this.fbDB.collection('posts', ref => ref.limit(3).orderBy('id', 'asc'))
-          .get()
-          .subscribe({
-            next: (x)=> {
-              x.forEach((doc:QueryDocumentSnapshot<Post>) => {
-                tempArray.push(doc.data());
-              });
-              observer.next(tempArray);
-            }
-          })
+        var first;
+        if(pageId*3 >= x) {
+          first = this.fbDB.collection('posts', ref => ref.limit(1).orderBy("createdAt"));
         }
-        else if(pageId*3 < x.size) {
-          this.fbDB.collection('posts', ref => ref.limit(3).orderBy('id', 'asc').startAfter(x.size - pageId*3))
-          .get()
-          .subscribe({
-            next: x=> {
-              x.forEach( (doc:QueryDocumentSnapshot<Post>) => {
-                tempArray.push(doc.data());
-              });
-              observer.next(tempArray);
-            }
-          })
+        else if(pageId*3 < x) {
+          first = this.fbDB.collection('posts', ref => ref.limit(x-pageId*3).orderBy("createdAt"));
         }
+        authServiceSub = this.authService.fireAuthUser.subscribe( b => {
+          if (b) {
+            firstSub = first.get().subscribe( documentSnapshots => {
+              var lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
+              var next;
+              if (pageId*3 >= x) {
+                next = this.fbDB.collection('posts', ref => ref.limit(3).orderBy("createdAt", 'asc').startAt(lastVisible));
+              }
+              else if(pageId*3 < x) {
+                // this.authService.fireAuthUser.subscribe( x => {
+                //   if (x) {
+                next = this.fbDB.collection('posts', ref => ref.limit(3).orderBy("createdAt", 'asc').startAfter(lastVisible));
+                //   }
+                // })
+              }
+              nextSub = next.get().subscribe( x => {
+                tempArray = [];
+                x.forEach((doc:QueryDocumentSnapshot<Post>) => {
+                  tempArray.push(doc.data());
+                });
+                observer.next(tempArray);
+              })
+            })
+          }
+        })
       }
     })
+    return {
+      unsubscribe() {
+        nextSub.unsubscribe();
+        firstSub.unsubscribe();
+        postsAmountSub.unsubscribe();
+        authServiceSub.unsubscribe();
+      }
+    };
   });
   // getComments(): Array<Comment> {
   //   let postNum = parseInt(this.router.url[this.router.url.length-1]);
@@ -239,15 +152,3 @@ export class PostService {
   //   //console.log(posts);
   // }
 }
-
-//const postServiceFactory = () => new PostService();
-
-// export const postServiceProvider = Object.freeze({
-//   provide: PostService,
-//   useFactory: postServiceFactory
-// });
-
-export const postServiceProvider = {
-   provide: PostService,
-   useClass: PostService
-};
